@@ -20,15 +20,10 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v4
-        with:
-          accept-android-sdk-licenses: 'yes'
-          log-accepted-android-sdk-licenses: 'false'
-          packages: |
-            platform-tools
-            platforms;android-35
-            build-tools;35.0.0
+      - name: Install Android SDK packages
+        run: |
+          yes | sdkmanager --licenses > /dev/null 2>&1 || true
+          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
       - name: Make Gradle executable
         run: chmod +x ./gradlew
@@ -36,7 +31,7 @@ jobs:
       - name: Build QuestDay APK
         run: ./gradlew assembleDebug
 
-      - name: Upload QuestDay APK
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: QuestDay-APK
